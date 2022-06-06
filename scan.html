@@ -4,66 +4,127 @@
     <meta charset="utf-8">
     <title></title>
     <style media="screen">
+        body {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
+        }
+
         section {
-            display:flex;
+            order: 0;
+            flex: 0 1 auto;
+            align-self: auto;
+
+            display: flex;
             flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
+        }
+
+        section > div {
+            order: 0;
+            flex: 0 1 auto;
+            align-self: auto;
+            margin: 1em;
         }
 
         img {
             display: block;
-            max-width: 40vw;
-            max-height: 40vh;
+            max-width: 30vw;
+            max-height: 30vh;
             min-width: 5vw;
             min-height: 2vh;
-            margin: 1em;
         }
     </style>
-    <script type="text/javascript">
+</head>
+<body>
+    <div class="">
+        Status: <span id="info">-</span>
+    </div>
+    <section>
+        <div class="">
+            <img src="test55331101.jpg" />
+        </div>
+        <div class="">
+            <img src="test55331101.png" />
+        </div>
+        <div class="">
+            <img src="20220102_143957.jpg" />
+        </div>
+        <div class="">
+            <img src="test55331102.png" />
+        </div>
+        <div class="">
+            <img src="test55331103__4000x3000.png" />
+        </div>
+        <div class="">
+            <img src="20220305_173228.jpg" />
+        </div>
+        <div class="">
+            <img src="test55331104__3000x4000.png" />
+        </div>
+        <div class="">
+            <img src="test55331105.png" />
+        </div>
+    </section>
+
+    <!-- <button>
+        start scanning
+    </button> -->
+
+    <script type="module" type="text/javascript">
         import QrScanner from 'https://cdnjs.cloudflare.com/ajax/libs/qr-scanner/1.4.1/qr-scanner.min.js';
 
         function startScanning() {
-
-            const imgList = document.querySelectorAll("img");
+            const info = document.querySelector("#info")
+            info.textContent = "scanning started..."
+            const imgList = document.querySelectorAll("img")
             console.log("imgList.length", imgList.length);
 
             const qrscanning = [];
 
             for (const image of imgList) {
-                console.log("start scan for ", image.src);
+                const content = document.createElement("div")
+                image.parentElement.append(content)
+
+                console.log("start scan for ", image.src)
                 qrscanning.push(
                     QrScanner.scanImage(image.src, {
                         returnDetailedScanResult: true
                     })
-                    .then(result => console.log(result))
+                    .then(result => {
+                        console.log(result);
+                        content.append(document.createTextNode(`data: ${result.data}`))
+                    })
                     .catch(error => {
-                        console.log("scan error", error || 'No QR code found.')
+                        const error_message = error || 'No QR code found.'
+                        console.log(error_message)
+                        content.append(document.createTextNode(error_message))
                     })
                 );
             }
 
             Promise.allSettled(qrscanning).then(() => {
                 console.log("all images are scanned...");
+                info.textContent = "all images scanned."
             }).catch((error) => {
                 console.error("qrscanning catch:", error);
             })
         }
 
+        window.addEventListener('load', (event) => {
+            //console.info('All resources finished loading!', event);
+            console.info('All resources finished loading.');
+            startScanning();
+        });
 
-        const button = document.querySelector("button");
-        button.addEventListener('click', startScanning);
+        // const button = document.querySelector("button");
+        // button.addEventListener('click', startScanning);
     </script>
-</head>
-<body>
-
-    <section>
-        <img src="https://github.com/s-light/qr_test_images/blob/main/test55331101.jpg?raw=true" />
-        <img src="https://github.com/s-light/qr_test_images/blob/main/test55331102.png?raw=true" />
-        <img src="https://github.com/s-light/qr_test_images/blob/main/test55331103__4000x3000.png?raw=true" />
-        <img src="https://github.com/s-light/qr_test_images/blob/main/test55331104__3000x4000.png?raw=true" />
-    </section>
-
-    <button>
-        start scanning
-    </button>
 </body>
 </html>
